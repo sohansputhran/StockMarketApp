@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 
-import os
-os.system(f"pip install yfinance")
 import yfinance as yf
 from plotly import graph_objs as go
 
