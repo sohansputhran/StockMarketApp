@@ -7,6 +7,7 @@ import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
+import datetime
 
 START = '2020-01-01'
 TODAY = date.today().strftime("%Y-%m-%d")
@@ -25,8 +26,8 @@ def plot_raw_data():
     st.plotly_chart(fig)
 
 def get_input():
-    start_date = pd.to_datetime(st.sidebar.text_input('Start Date', '2019-01-01'))
-    end_date = pd.to_datetime(st.sidebar.text_input('End Date', '2021-08-01'))
+    start_date = st.sidebar.date_input('Start Date', datetime.date(2019, 7, 6))
+    end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
     stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
     return start_date, end_date, stock_ticker
 
@@ -46,6 +47,9 @@ st.subheader('Raw Data')
 st.write(data.head())
 
 plot_raw_data()
+st.line_chart(data.Close)
+st.line_chart(data.Volume)
+
 
 # Display company name
 company = yf.Ticker(selected_stocks)
