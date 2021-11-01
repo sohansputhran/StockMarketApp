@@ -1,16 +1,19 @@
+# Description : Stock Market Dashboard to show some Exploratory Data Analysis.
+
 import streamlit as st
 import pandas as pd
 from datetime import date
+import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
 
-START = '2018-01-01'
+START = '2020-01-01'
 TODAY = date.today().strftime("%Y-%m-%d")
 
-@st.cache
-def load_data(ticker):
-    data = yf.download(ticker, START, TODAY)
+# @st.cache
+def load_data(ticker, START, END = TODAY):
+    data = yf.download(ticker, START, END)
     data.reset_index(inplace=True)
     return data
 
@@ -21,19 +24,22 @@ def plot_raw_data():
     fig.layout.update(title_text = 'Time Series Data', xaxis_rangeslider_visible = True)
     st.plotly_chart(fig)
 
+def get_input():
+    start_date = pd.to_datetime(st.sidebar.text_input('Start Date', '2019-01-01'))
+    end_date = pd.to_datetime(st.sidebar.text_input('End Date', '2021-08-01'))
+    stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
+    return start_date, end_date, stock_ticker
 
-st.title("Stock Prediction App")
+def get_stock_name(stock_ticker):
+    pass
 
-stocks = ("AAPL", 'GOOG', 'MSFT', 'GME')
-selected_stocks = st.selectbox("Select dataset for prediction", stocks)
+st.title("Stock Market Web Applcation")
 
-n_years = st.slider("Years of Prediction:", 1, 4)
-period = 365 * n_years
+st.sidebar.header("User Input")
 
-
-
+start_date, end_date, selected_stocks = get_input()
 data_load_state = st.text("Load Data")
-data = load_data(selected_stocks)
+data = load_data(selected_stocks, start_date, end_date)
 data_load_state.text("Loading Data... Done!")
 
 st.subheader('Raw Data')
@@ -41,14 +47,7 @@ st.write(data.head())
 
 plot_raw_data()
 
-st.sidebar.header("User Input")
-
-def get_input():
-    start_date = st.sidebar.text_input('Start Date', '2019-01-01')
-    end_date = st.sidebar.text_input('End Date', '2021-08-01')
-    stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
-    return start_date, end_date, stock_ticker
-
-def get_stock_name(stock_ticker):
-    pass
-
+# Display company name
+company = yf.Ticker(selected_stocks)
+company_name = company.info['longName']
+st.write(company_name)
