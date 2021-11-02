@@ -7,14 +7,13 @@ import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
 import datetime
 
-START = '2020-01-01'
-TODAY = date.today().strftime("%Y-%m-%d")
-
 # @st.cache
-def load_data(ticker, START, END = TODAY):
-    data = yf.download(ticker, START, END)
+def load_data(ticker, start, end):
+    data = yf.download(ticker, start, end)
     data.reset_index(inplace=True)
     return data
 
@@ -30,9 +29,6 @@ def get_input():
     end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
     stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
     return start_date, end_date, stock_ticker
-
-def get_stock_name(stock_ticker):
-    pass
 
 st.title("Stock Market Web Applcation")
 
