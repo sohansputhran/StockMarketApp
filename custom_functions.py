@@ -7,25 +7,17 @@ import yfinance as yf
 from plotly import graph_objs as go
 import datetime
 
-def load_data(ticker, start, end):
-    data = yf.download(ticker, start, end)
-    data.reset_index(inplace=True)
-    data = data.set_index(pd.DatetimeIndex(data['Date']).values)
-    return data
-
-def plot_raw_data(data):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x = data.Date, y = data.SMA, name = 'Simple Moving Average'))
-    fig.add_trace(go.Scatter(x = data.Date, y = data.EMA, name = 'Exponential Moving Average'))
-    fig.add_trace(go.Scatter(x = data.Date, y = data.Close, name = 'Stock Close'))
-    fig.layout.update(title_text = 'Time Series Data', xaxis_rangeslider_visible = True)
-    st.plotly_chart(fig)
-
 def get_input():
     start_date = st.sidebar.date_input('Start Date', datetime.date(2019, 7, 6))
     end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
     stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
     return start_date, end_date, stock_ticker
+
+def load_data(ticker, start, end):
+    data = yf.download(ticker, start, end)
+    data.reset_index(inplace=True)
+    data = data.set_index(pd.DatetimeIndex(data['Date']).values)
+    return data
 
 # Simple Moving Average (SMA)
 def generate_SMA(data, period = 20, column = 'Close'):
@@ -65,5 +57,13 @@ def generate_RSI(data, period = 14, column = 'Close'):
 
     RSI = 100.0 - (100.0 / (1.0 + (AVG_gain / AVG_loss)))
     data['RSI'] = RSI
-    
+
     return data
+
+def plot_raw_data(data):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x = data.Date, y = data.SMA, name = 'Simple Moving Average'))
+    fig.add_trace(go.Scatter(x = data.Date, y = data.EMA, name = 'Exponential Moving Average'))
+    fig.add_trace(go.Scatter(x = data.Date, y = data.Close, name = 'Stock Close'))
+    fig.layout.update(title_text = 'Time Series Data', xaxis_rangeslider_visible = True)
+    st.plotly_chart(fig)
