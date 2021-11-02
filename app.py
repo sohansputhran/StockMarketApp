@@ -23,13 +23,20 @@ st.subheader('Raw Data')
 st.write(data.head())
 
 data = generate_MACD(data)
+data = generate_RSI(data)
 
 data['SMA'] = generate_SMA(data)
 data['EMA'] = generate_EMA(data)
 
 plot_raw_data(data)
 
-st.line_chart(data.Close)
+fig = go.Figure()
+fig.add_trace(go.Scatter(x = data.Date, y = data.MACD, name = 'Moving Average Divergence/Convergence'))
+fig.add_trace(go.Scatter(x = data.Date, y = data.Signal_Line, name = 'Signal Line'))
+fig.layout.update(title_text = 'Moving Average Divergence/Convergence and Signal Line', xaxis_rangeslider_visible = True)
+st.plotly_chart(fig)
+
+st.line_chart(data.RSI)
 st.line_chart(data.Volume)
 
 

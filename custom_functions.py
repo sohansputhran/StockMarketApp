@@ -45,3 +45,25 @@ def generate_MACD(data, period_long = 26, period_short = 12, period_signal = 9, 
     data['MACD'] = short_EMA - long_EMA
     data['Signal_Line'] = generate_EMA(data, period_signal, "MACD")
     return data
+
+# Relative Strength Index (RSI) 
+def generate_RSI(data, period = 14, column = 'Close'):
+    delta = data[column].diff(1)
+    delta = delta[1:]
+    
+    up = delta.copy()
+    down = delta.copy()
+
+    up[ up < 0] = 0
+    down[ down > 0] = 0
+
+    data['up'] = up
+    data['down'] = down
+
+    AVG_gain = generate_SMA(data, period, 'up')
+    AVG_loss = abs(generate_SMA(data, period, 'down'))
+
+    RSI = 100.0 - (100.0 / (1.0 + (AVG_gain / AVG_loss)))
+    data['RSI'] = RSI
+    
+    return data
