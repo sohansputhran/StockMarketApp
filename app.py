@@ -7,28 +7,8 @@ import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
-import matplotlib.pyplot as plt
-plt.style.use('fivethirtyeight')
 import datetime
-
-# @st.cache
-def load_data(ticker, start, end):
-    data = yf.download(ticker, start, end)
-    data.reset_index(inplace=True)
-    return data
-
-def plot_raw_data():
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x = data.Date, y = data.Open, name = 'Stock Open'))
-    fig.add_trace(go.Scatter(x = data.Date, y = data.Close, name = 'Stock Close'))
-    fig.layout.update(title_text = 'Time Series Data', xaxis_rangeslider_visible = True)
-    st.plotly_chart(fig)
-
-def get_input():
-    start_date = st.sidebar.date_input('Start Date', datetime.date(2019, 7, 6))
-    end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
-    stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
-    return start_date, end_date, stock_ticker
+from custom_functions import *
 
 st.title("Stock Market Web Applcation")
 
@@ -42,7 +22,13 @@ data_load_state.text("Loading Data... Done!")
 st.subheader('Raw Data')
 st.write(data.head())
 
-plot_raw_data()
+data = generate_MACD(data)
+
+data['SMA'] = generate_SMA(data)
+data['EMA'] = generate_EMA(data)
+
+plot_raw_data(data)
+
 st.line_chart(data.Close)
 st.line_chart(data.Volume)
 

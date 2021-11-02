@@ -1,0 +1,47 @@
+import streamlit as st
+import pandas as pd
+from datetime import date
+import requests
+
+import yfinance as yf
+from plotly import graph_objs as go
+import datetime
+
+def load_data(ticker, start, end):
+    data = yf.download(ticker, start, end)
+    data.reset_index(inplace=True)
+    data = data.set_index(pd.DatetimeIndex(data['Date']).values)
+    return data
+
+def plot_raw_data(data):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x = data.Date, y = data.SMA, name = 'Simple Moving Average'))
+    fig.add_trace(go.Scatter(x = data.Date, y = data.EMA, name = 'Exponential Moving Average'))
+    fig.add_trace(go.Scatter(x = data.Date, y = data.Close, name = 'Stock Close'))
+    fig.layout.update(title_text = 'Time Series Data', xaxis_rangeslider_visible = True)
+    st.plotly_chart(fig)
+
+def get_input():
+    start_date = st.sidebar.date_input('Start Date', datetime.date(2019, 7, 6))
+    end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
+    stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
+    return start_date, end_date, stock_ticker
+
+# Simple Moving Average (SMA)
+def generate_SMA(data, period = 20, column = 'Close'):
+    return data[column].rolling(window = period).mean()
+
+# Exponential Moving Average (EMA)
+def generate_EMA(data, period = 20, column = 'Close'):
+    return data[column].ewm(span = period, adjust = False).mean()
+
+# Moving Average Convergence / Divergence (MACD)
+def generate_MACD(data, period_long = 26, period_short = 12, period_signal = 9, column = 'Close'):
+    
+    # Short term EMA
+    short_EMA = generate_EMA(data, period_short, column)
+    # Long term EMA
+    long_EMA = generate_EMA(data, period_long, column)
+    data['MACD'] = short_EMA - long_EMA
+    data['Signal_Line'] = generate_EMA(data, period_signal, "MACD")
+    return data
