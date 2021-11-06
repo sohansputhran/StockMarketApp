@@ -10,7 +10,7 @@ from plotly import graph_objs as go
 import datetime
 from custom_functions import *
 
-st.title("Stock Market Web Applcation")
+st.title("Stock Market Dashboard")
 
 st.sidebar.header("User Input")
 
