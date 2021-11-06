@@ -37,8 +37,6 @@ fig.layout.update(title_text = 'Moving Average Divergence/Convergence and Signal
 st.plotly_chart(fig)
 
 st.line_chart(data.RSI)
-st.line_chart(data.Volume)
-
 
 # Display company name
 company = yf.Ticker(selected_stocks)
