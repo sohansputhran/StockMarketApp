@@ -7,14 +7,17 @@ import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
-import datetime
+from datetime import datetime, timedelta, date
 from custom_functions import *
 
 st.title("Stock Market Dashboard")
 
 st.sidebar.header("User Input")
 
-start_date, end_date, selected_stocks = get_input()
+default_end_date = date.today()
+default_start_date = date(2020, 10, 6)
+
+start_date, end_date, selected_stocks = get_input(default_start_date, default_end_date)
 data_load_state = st.text("Load Data")
 data = load_data(selected_stocks, start_date, end_date)
 data_load_state.text("Loading Data... Done!")

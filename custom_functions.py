@@ -5,11 +5,10 @@ import requests
 
 import yfinance as yf
 from plotly import graph_objs as go
-import datetime
 
-def get_input():
-    start_date = st.sidebar.date_input('Start Date', datetime.date(2019, 7, 6))
-    end_date = pd.to_datetime(st.sidebar.date_input('End Date', datetime.date(2021, 7, 6)))
+def get_input(default_start_date, default_end_date):
+    start_date = st.sidebar.date_input('Start Date', default_start_date)
+    end_date = pd.to_datetime(st.sidebar.date_input('End Date', default_end_date))
     stock_ticker = st.sidebar.text_input('Ticker Symbol', 'AAPL')
     return start_date, end_date, stock_ticker
 
